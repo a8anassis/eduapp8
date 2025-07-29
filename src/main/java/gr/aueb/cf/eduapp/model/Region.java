@@ -14,6 +14,7 @@ import java.util.Collections;
 @Setter
 @Table(name = "regions")
 public class Region {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
