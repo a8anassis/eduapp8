@@ -15,7 +15,7 @@ public class TeacherReadOnlyDTO {
     private String uuid;
     private Boolean isActive;
 
-    private UserReadOnlyDTO user;
+    private UserReadOnlyDTO userReadOnlyDTO;
 
-    private PersonalInfoReadOnlyDTO personalInfo;
+    private PersonalInfoReadOnlyDTO personalInfoReadOnlyDTO;
 }
