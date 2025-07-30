@@ -3,6 +3,8 @@ package gr.aueb.cf.eduapp.api;
 import gr.aueb.cf.eduapp.core.exceptions.AppObjectAlreadyExists;
 import gr.aueb.cf.eduapp.core.exceptions.AppObjectInvalidArgumentException;
 import gr.aueb.cf.eduapp.core.exceptions.ValidationException;
+import gr.aueb.cf.eduapp.core.filters.Paginated;
+import gr.aueb.cf.eduapp.core.filters.TeacherFilters;
 import gr.aueb.cf.eduapp.dto.TeacherInsertDTO;
 import gr.aueb.cf.eduapp.dto.TeacherReadOnlyDTO;
 import gr.aueb.cf.eduapp.service.ITeacherService;
@@ -58,5 +60,13 @@ public class TeacherRestController {
     ) {
         Page<TeacherReadOnlyDTO> teachersPage = teacherService.getPaginatedTeachers(page, size);
         return ResponseEntity.ok(teachersPage);
+    }
+
+    public ResponseEntity<Paginated<TeacherReadOnlyDTO>> getFilteredAndPaginatedTeachers(
+            @Nullable @RequestBody TeacherFilters filters)  {
+
+        if (filters == null) filters = TeacherFilters.builder().build();
+        Paginated<TeacherReadOnlyDTO> dtoPaginated = teacherService.getTeachersFilteredPaginated(filters);
+        return ResponseEntity.ok(dtoPaginated);
     }
 }
