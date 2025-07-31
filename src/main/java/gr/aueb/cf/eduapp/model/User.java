@@ -56,10 +56,10 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @OneToOne(mappedBy = "userInsertDTO")
+    @OneToOne(mappedBy = "user")
     private Employee employee;
 
-    @OneToOne(mappedBy = "userInsertDTO")
+    @OneToOne(mappedBy = "user")
     private Teacher teacher;
 
     public boolean isEmployee() {
