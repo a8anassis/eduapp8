@@ -67,7 +67,7 @@ public class TeacherService implements ITeacherService {
         Teacher teacher = mapper.mapToTeacherEntity(teacherInsertDTO);
 
         if (amkaFile != null && !amkaFile.isEmpty()) {
-            // saveAmkaFile(teacher.getPersonalInfo(), amkaFile);
+            saveAmkaFile(teacher.getPersonalInfo(), amkaFile);
         }
 
         // Saves teacher (cascades to User and PersonalInfo)

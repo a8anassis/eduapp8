@@ -3,7 +3,6 @@ package gr.aueb.cf.eduapp.core.specifications;
 import gr.aueb.cf.eduapp.model.PersonalInfo;
 import gr.aueb.cf.eduapp.model.Teacher;
 import gr.aueb.cf.eduapp.model.User;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
