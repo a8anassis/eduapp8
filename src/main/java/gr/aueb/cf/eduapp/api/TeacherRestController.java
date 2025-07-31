@@ -62,6 +62,7 @@ public class TeacherRestController {
         return ResponseEntity.ok(teachersPage);
     }
 
+    @PostMapping("/teachers/search")
     public ResponseEntity<Paginated<TeacherReadOnlyDTO>> getFilteredAndPaginatedTeachers(
             @Nullable @RequestBody TeacherFilters filters)  {
 
