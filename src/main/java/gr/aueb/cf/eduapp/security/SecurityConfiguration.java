@@ -32,7 +32,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfiguration {
-    //private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
@@ -45,7 +45,7 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/auth/authenticate").permitAll()
                                 .requestMatchers("/api/teachers/**").hasAnyAuthority(Role.TEACHER.name(), Role.SUPER_ADMIN.name())
                                 .requestMatchers("/api/employess/**").hasAuthority(Role.EMPLOYEE.name())
-                                .requestMatchers("/**").authenticated()
+                                .requestMatchers("/**").permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
