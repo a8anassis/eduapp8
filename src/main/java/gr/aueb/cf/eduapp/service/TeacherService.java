@@ -102,7 +102,8 @@ public class TeacherService implements ITeacherService {
         Path filePath = Paths.get(uploadDirectory + savedName);
 
         Files.createDirectories(filePath.getParent());
-        Files.write(filePath, amkaFile.getBytes());
+//        Files.write(filePath, amkaFile.getBytes());
+        amkaFile.transferTo(filePath);  // safe for large files, more efficient
 
         Attachment attachment = new Attachment();
         attachment.setFilename(originalFilename);
