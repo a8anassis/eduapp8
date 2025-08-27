@@ -28,9 +28,4 @@ public class Region {
         if (educationalUnits == null) educationalUnits = new HashSet<>();
         return Collections.unmodifiableSet(educationalUnits);
     }
-
-    @Override
-    public String toString() {
-        return name;
-    }
 }
