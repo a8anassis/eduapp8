@@ -21,7 +21,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
 
-        log.warn("Access denied for user, with message={}", authException.getMessage());
+        log.warn("User not authenticated, with message={}", authException.getMessage());
         // Set the response status to 401 Unauthorized
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json; charset=UTF-8");
