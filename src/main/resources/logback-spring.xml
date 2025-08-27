@@ -18,7 +18,7 @@
             <level>INFO</level>
         </filter>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%X{user}] [%X{ip}] - %msg%n{}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logs/all.%d{yyyy-MM-dd}.log</fileNamePattern>
