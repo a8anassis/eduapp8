@@ -1,5 +1,6 @@
 package gr.aueb.cf.eduapp.core.filters;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
@@ -8,21 +9,27 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Paginated<T>{
-
+@Builder
+public class Paginated<T> {
     List<T> data;
-    long totalElements;
-    int totalPages;
-    int numberOfElements;
     int currentPage;
     int pageSize;
+    int totalPages;
+    int numberOfElements;
+    long totalElements;
 
-    public Paginated(Page<T> page) {
-        this.data = page.getContent();
-        this.totalElements = page.getTotalElements();
-        this.totalPages = page.getTotalPages();
-        this.numberOfElements = page.getNumberOfElements();
-        this.currentPage = page.getNumber();
-        this.pageSize = page.getSize();
+    public static <T> Paginated<T> fromPage(Page<T> page) {
+        // Static members are associated with the raw class (Paginated),
+        // not its parameterized versions
+        // (Paginated<T>). Therefore, the type parameter must come before
+        // the method name
+        return Paginated.<T>builder()
+                .data(page.getContent())
+                .currentPage(page.getNumber())
+                .pageSize(page.getSize())
+                .totalPages(page.getTotalPages())
+                .numberOfElements(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
+                .build();
     }
 }
