@@ -10,31 +10,29 @@ import org.springframework.data.domain.Sort;
 @Getter
 @Setter
 public abstract class GenericFilters {
-    private final static int DEFAULT_PAGE_SIZE = 10;
+    private static final int DEFAULT_PAGE_SIZE = 10;
     private static final String DEFAULT_SORT_COLUMN = "id";
     private static final Sort.Direction DEFAULT_SORT_DIRECTION = Sort.Direction.ASC;
 
     private int page;
     private int pageSize;
-    private Sort.Direction sortDirection;
     private String sortBy;
-
-    public int getPageSize() {
-        return pageSize <= 0 ? DEFAULT_PAGE_SIZE : pageSize;
-    }
+    private Sort.Direction sortDirection;
 
     public int getPage() {
         return Math.max(page, 0);
     }
 
-    public Sort.Direction getSortDirection(){
-        if (this.sortDirection == null) return DEFAULT_SORT_DIRECTION;
-        return this.sortDirection;
+    public int getPageSize() {
+        return pageSize <= 0 ? DEFAULT_PAGE_SIZE : pageSize;
     }
 
     public String getSortBy(){
-        if (this.sortBy == null || StringUtils.isBlank(this.sortBy)) return DEFAULT_SORT_COLUMN;
-        return this.sortBy;
+        return StringUtils.isBlank(this.sortBy) ? DEFAULT_SORT_COLUMN : this.sortBy;
+    }
+
+    public Sort.Direction getSortDirection(){
+        return this.sortDirection != null ? this.sortDirection : DEFAULT_SORT_DIRECTION;
     }
 
     public Pageable getPageable(){
