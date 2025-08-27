@@ -2,11 +2,13 @@ package gr.aueb.cf.eduapp.service;
 
 import gr.aueb.cf.eduapp.core.exceptions.AppObjectAlreadyExists;
 import gr.aueb.cf.eduapp.core.exceptions.AppObjectInvalidArgumentException;
+import gr.aueb.cf.eduapp.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.eduapp.core.filters.Paginated;
 import gr.aueb.cf.eduapp.core.filters.TeacherFilters;
 import gr.aueb.cf.eduapp.core.specifications.TeacherSpecification;
 import gr.aueb.cf.eduapp.dto.TeacherInsertDTO;
 import gr.aueb.cf.eduapp.dto.TeacherReadOnlyDTO;
+import gr.aueb.cf.eduapp.dto.TeacherUpdateDTO;
 import gr.aueb.cf.eduapp.mapper.Mapper;
 import gr.aueb.cf.eduapp.model.Attachment;
 import gr.aueb.cf.eduapp.model.PersonalInfo;
@@ -17,7 +19,9 @@ import gr.aueb.cf.eduapp.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,11 +47,10 @@ public class TeacherService implements ITeacherService {
     private final PersonalInfoRepository personalInfoRepository;
     private final Mapper mapper;
 
-
     @Override
     @Transactional(rollbackOn = Exception.class)
     public TeacherReadOnlyDTO saveTeacher(TeacherInsertDTO teacherInsertDTO, MultipartFile amkaFile)
-            throws AppObjectAlreadyExists, AppObjectInvalidArgumentException, IOException {
+            throws AppObjectAlreadyExists, IOException {
 
         if (userRepository.findByVat(teacherInsertDTO.userInsertDTO().vat()).isPresent()) {
             throw new AppObjectAlreadyExists("VAT", "User with vat " + teacherInsertDTO.userInsertDTO().vat() + " already exists");
@@ -77,18 +81,66 @@ public class TeacherService implements ITeacherService {
     }
 
     @Override
-    public Page<TeacherReadOnlyDTO> getPaginatedTeachers(int page, int size) {
+    @Transactional(rollbackOn = Exception.class)
+    public TeacherReadOnlyDTO updateTeacher(TeacherUpdateDTO teacherUpdateDTO, MultipartFile amkaFile)
+            throws AppObjectAlreadyExists, IOException, AppObjectNotFoundException {
+
+        if (teacherRepository.findById(teacherUpdateDTO.id()).isEmpty()) {
+            throw new AppObjectNotFoundException("Teacher", "Teacher with id " + teacherUpdateDTO.id() + " not found");
+        }
+
+        Teacher existingTeacher = teacherRepository.findById(teacherUpdateDTO.id()).orElse(null);
+        if (existingTeacher == null) throw new AppObjectNotFoundException("Teacher", "Teacher with id=" + teacherUpdateDTO.id() + " not found");
+
+        if (!existingTeacher.getUser().getVat().equals(teacherUpdateDTO.userUpdateDTO().vat()) &&
+                userRepository.findByVat(teacherUpdateDTO.userUpdateDTO().vat()).isPresent()) {
+            throw new AppObjectAlreadyExists("Teacher", "Teacher with vat " + teacherUpdateDTO.userUpdateDTO().vat() + " already exists");
+        }
+
+        if (!existingTeacher.getPersonalInfo().getIdentityNumber().equals(teacherUpdateDTO.personalInfoUpdateDTO().identityNumber()) &&
+                personalInfoRepository.findByIdentityNumber(teacherUpdateDTO.personalInfoUpdateDTO().identityNumber()).isPresent()) {
+            throw new AppObjectAlreadyExists("Teacher", "Teacher with identity number " + teacherUpdateDTO.personalInfoUpdateDTO().identityNumber() + " already exists");
+        }
+
+        Teacher teacherToUpdate = mapper.mapToTeacherEntity(teacherUpdateDTO);
+        if (amkaFile != null && !amkaFile.isEmpty()) {
+            Files.deleteIfExists(Paths.get(existingTeacher.getPersonalInfo().getAmkaFile().getFilePath()));
+            saveAmkaFile(teacherToUpdate.getPersonalInfo(), amkaFile);
+        }
+
+        // Saves teacher (cascades to User and PersonalInfo)
+        Teacher updatedTeacher = teacherRepository.save(teacherToUpdate);
+        log.info("Teacher with id={} saved.", teacherUpdateDTO.personalInfoUpdateDTO().id());
+        return mapper.mapToTeacherReadOnlyDTO(updatedTeacher);
+    }
+
+    @Override
+    public TeacherReadOnlyDTO getOneTeacher(String uuid) throws AppObjectNotFoundException {
+        return teacherRepository
+                .findByUuid(uuid)
+                .map(mapper::mapToTeacherReadOnlyDTO)
+                .orElseThrow(() ->
+                    new AppObjectNotFoundException("Teacher", "Teacher with uuid:" + uuid + " not found"));
+    }
+
+    @Override
+//    public Page<TeacherReadOnlyDTO> getPaginatedTeachers(int page, int size) {
+    public Paginated<TeacherReadOnlyDTO> getPaginatedTeachers(int page, int size) {
         String defaultSort = "id";
         Pageable pageable = PageRequest.of(page, size, Sort.by(defaultSort).ascending());
         log.debug("Paginated teachers were returned successfully with page={} and size={}", page, size);
-        return teacherRepository.findAll(pageable).map(mapper::mapToTeacherReadOnlyDTO);
+//        return teacherRepository.findAll(pageable).map(mapper::mapToTeacherReadOnlyDTO);
+        var paginatedTeachers = teacherRepository.findAll(pageable);
+        return Paginated.fromPage(paginatedTeachers.map(mapper::mapToTeacherReadOnlyDTO));
     }
 
     @Override
     public Paginated<TeacherReadOnlyDTO> getTeachersFilteredPaginated(TeacherFilters teacherFilters) {
         var filtered = teacherRepository.findAll(getSpecsFromFilters(teacherFilters), teacherFilters.getPageable());
-        log.debug("Filtered and paginated teachers were returned successfully with page={} and size={}", teacherFilters.getPage(), teacherFilters.getPageSize());
-        return new Paginated<>(filtered.map(mapper::mapToTeacherReadOnlyDTO));
+        log.debug("Filtered and paginated teachers were returned successfully with page={} and size={}", teacherFilters.getPage(),
+                teacherFilters.getPageSize());
+//        return new Paginated<>(filtered.map(mapper::mapToTeacherReadOnlyDTO));
+        return Paginated.fromPage(filtered.map(mapper::mapToTeacherReadOnlyDTO));
     }
 
 
