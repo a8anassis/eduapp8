@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//@DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractEntity {
 
@@ -28,7 +27,7 @@ public abstract class AbstractEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate   // persist, merge
+    @LastModifiedDate   // persist & merge
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 }
