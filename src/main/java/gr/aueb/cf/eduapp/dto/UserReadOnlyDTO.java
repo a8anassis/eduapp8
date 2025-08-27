@@ -1,16 +1,6 @@
 package gr.aueb.cf.eduapp.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Builder;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class UserReadOnlyDTO {
-    private String firstname;
-    private String lastname;
-    private String vat;
-}
+@Builder
+public record UserReadOnlyDTO(String firstname, String lastname, String vat) {}
