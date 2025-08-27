@@ -17,22 +17,11 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    //    private String secretKey = System.getenv("SECRET_KEY");
-    //    in linux-based, git-bash: openssl rand -base64 32 ή 48
-    //  Strong security 384-bits = 48 bytes = 64 Base64URL characters
-    //  private String secretKey = "5ce98d378ec88ea09ba8bcd511ef23645f04cc8e70b9134b98723a53c275bbc5";
-
-    //    private String secretKey = "FvArDZiJ1hvR9k3Ks1J6s8FqbmL6rRnlmTL5J3jNiT8";
     @Value("${app.security.secret-key}")
     private String secretKey;
 
-
-    //  private long jwtExpiration = 10800000;  // 3 hours in milliseconds
     @Value("${app.security.jwt-expiration}")
     private long jwtExpiration;
-
-//    if use refresh expiration token
-//    private long refreshExpiration = 604800000;
 
     public String generateToken(String username, String role) {
         var claims = new HashMap<String, Object>();
