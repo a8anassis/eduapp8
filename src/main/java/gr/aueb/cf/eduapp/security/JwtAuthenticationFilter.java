@@ -31,7 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
@@ -70,7 +71,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // triggers το AccessDeniedException (403)
             throw new AccessDeniedException("Token validation failed", e);
         }
-
         filterChain.doFilter(request, response);
     }
 }
