@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO dto) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
+                new UsernamePasswordAuthenticationToken(dto.username(), dto.password()));
 
         User user = (User) authentication.getPrincipal();
         String token = jwtService.generateToken(authentication.getName(), user.getRole().name());
