@@ -20,20 +20,10 @@ public class PersonalInfo extends AbstractEntity {
 
     @Column(unique = true)
     private String identityNumber;
-
     private String placeOfBirth;
     private String municipalityOfRegistration;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "amka_file_id")
     private Attachment amkaFile;
-
-    public PersonalInfo(Long id, String  amka, String identityNumber,
-                        String placeOfBirth, String municipalityOfRegistration) {
-        this.id = id;
-        this.amka = amka;
-        this.identityNumber = identityNumber;
-        this.placeOfBirth = placeOfBirth;
-        this.municipalityOfRegistration = municipalityOfRegistration;
-    }
 }
