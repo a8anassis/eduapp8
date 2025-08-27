@@ -3,13 +3,11 @@ package gr.aueb.cf.eduapp.dto;
 import gr.aueb.cf.eduapp.core.enums.GenderType;
 import gr.aueb.cf.eduapp.core.enums.Role;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
+@Builder
 public record UserInsertDTO(
         @NotEmpty(message = "First name is required")
         String firstname,
