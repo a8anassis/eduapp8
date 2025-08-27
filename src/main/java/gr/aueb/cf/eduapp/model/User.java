@@ -3,10 +3,7 @@ package gr.aueb.cf.eduapp.model;
 import gr.aueb.cf.eduapp.core.enums.Role;
 import gr.aueb.cf.eduapp.core.enums.GenderType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Table(name = "users")
 public class User extends AbstractEntity implements UserDetails {
     @Id
@@ -53,7 +51,6 @@ public class User extends AbstractEntity implements UserDetails {
     private Role role;
 
     @ColumnDefault("true")
-    @Column(name = "is_active")
     private Boolean isActive;
 
     @OneToOne(mappedBy = "user")
@@ -76,18 +73,8 @@ public class User extends AbstractEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
-
-//    @Override
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return username;
-//    }
 
     @Override
     public boolean isAccountNonExpired() {
