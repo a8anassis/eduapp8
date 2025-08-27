@@ -2,7 +2,9 @@ package gr.aueb.cf.eduapp.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
+@Builder
 public record PersonalInfoInsertDTO(
         @NotEmpty(message = "AMKA is required")
         @Pattern(regexp = "\\d{11}", message = "AMKA must be an 11-digit number")
