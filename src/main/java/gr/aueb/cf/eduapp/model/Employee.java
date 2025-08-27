@@ -19,6 +19,9 @@ public class Employee extends AbstractEntity {
     private Long id;
     private Boolean isActive;
 
+    @Column(unique = true)
+    private String uuid;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
