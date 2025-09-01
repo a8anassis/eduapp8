@@ -20,11 +20,11 @@ jacoco {
 }
 
 jacocoTestReport {
-	dependsOn test // tests are run before generating report
+	dependsOn test // tests are run before generating report. For manual execution
 	reports {
-		xml.required = true
-		csv.required = false
-		html.required = true
+		xml.required = true		// XML report για CI tools
+		csv.required = false	// CSV συνήθως όχι απαραίτητο
+		html.required = true	// HTML report για developers
 	}
 }
 
@@ -76,5 +76,5 @@ dependencies {
 
 tasks.named('test', Test) {	// Gradle Test class implements 'test' task, it is default if missed
 	useJUnitPlatform()					// Configures the test task to use JUnit 5 engine to run the tests
-	finalizedBy(jacocoTestReport)		// after 'test' task, jacoco will run
+	finalizedBy(jacocoTestReport)		// after 'test' task, jacoco will run και αυτόματο report μετά test
 }
