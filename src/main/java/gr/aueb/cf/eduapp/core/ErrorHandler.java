@@ -26,7 +26,7 @@ import java.util.Map;
 @Slf4j
 public class ErrorHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler({ValidationException.class})
     public ResponseEntity<Map<String, String>> handleValidationException(ValidationException e) {
         log.warn("validation failed. Message={}", e.getMessage(), e);
         BindingResult bindingResult = e.getBindingResult();

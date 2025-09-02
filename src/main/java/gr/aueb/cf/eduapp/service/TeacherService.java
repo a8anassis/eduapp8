@@ -28,9 +28,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,13 +42,22 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class TeacherService implements ITeacherService {
 
     private final TeacherRepository teacherRepository;
     private final UserRepository userRepository;
     private final PersonalInfoRepository personalInfoRepository;
     private final Mapper mapper;
+
+    @Autowired
+    public TeacherService(TeacherRepository teacherRepository, UserRepository userRepository,
+                          PersonalInfoRepository personalInfoRepository, Mapper mapper) {
+        this.teacherRepository = teacherRepository;
+        this.userRepository = userRepository;
+        this.personalInfoRepository = personalInfoRepository;
+        this.mapper = mapper;
+    }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
@@ -70,12 +82,35 @@ public class TeacherService implements ITeacherService {
 
         Teacher teacher = mapper.mapToTeacherEntity(teacherInsertDTO);
 
-        if (amkaFile != null && !amkaFile.isEmpty()) {
-            saveAmkaFile(teacher.getPersonalInfo(), amkaFile);
+        if (amkaFile != null && !amkaFile.isEmpty()) {                  // Any non-database operation will NOT be rolled back
+            saveAmkaFile(teacher.getPersonalInfo(), amkaFile);          // change to saveAmkaFileAndGetPath
         }
 
+        // Register cleanup for rollback
+
+        // TransactionSynchronizationManager.registerSynchronization(...) is a Spring transaction hook.
+        // It lets you register a callback (a TransactionSynchronization) that Spring will call when the
+        // current transaction finishes (afterCompletion(status)
+        // either successfully (commit) or unsuccessfully (rollback).
+        // If status == STATUS_COMMITTED → the transaction was committed.
+        //If status == STATUS_ROLLED_BACK → the transaction was rolled back.
+
+//        TransactionSynchronizationManager.registerSynchronization(
+//                (TransactionSynchronization) status -> {
+//                    if (status == STATUS_ROLLED_BACK) {
+//                        try {
+//                            Files.deleteIfExists(filePath);
+//                        } catch (IOException e) {
+//                            throw new UncheckedIOException("Failed to delete file after rollback", e);
+//                        }
+//                    }
+//                }
+//        );
+
         // Saves teacher (cascades to User and PersonalInfo)
-        Teacher savedTeacher = teacherRepository.save(teacher);
+        Teacher savedTeacher = teacherRepository.save(teacher);     // Exception
+
+
         log.info("Teacher with amka={} saved.", teacherInsertDTO.personalInfoInsertDTO().amka());
         return mapper.mapToTeacherReadOnlyDTO(savedTeacher);
     }
@@ -105,8 +140,21 @@ public class TeacherService implements ITeacherService {
         Teacher teacherToUpdate = mapper.mapToTeacherEntity(teacherUpdateDTO);
         if (amkaFile != null && !amkaFile.isEmpty()) {
             Files.deleteIfExists(Paths.get(existingTeacher.getPersonalInfo().getAmkaFile().getFilePath()));
-            saveAmkaFile(teacherToUpdate.getPersonalInfo(), amkaFile);
+            saveAmkaFile(teacherToUpdate.getPersonalInfo(), amkaFile);          // change to saveAmkaFileAndGetPath
         }
+
+        // Register cleanup for rollback
+//        TransactionSynchronizationManager.registerSynchronization(
+//                (TransactionSynchronization) status -> {
+//                    if (status == TransactionSynchronization.STATUS_ROLLED_BACK) {
+//                        try {
+//                            Files.deleteIfExists(filePath);                   // get file path from above
+//                        } catch (IOException e) {
+//                            throw new UncheckedIOException("Failed to delete file after rollback", e);
+//                        }
+//                    }
+//                }
+//        );
 
         // Saves teacher (cascades to User and PersonalInfo)
         Teacher updatedTeacher = teacherRepository.save(teacherToUpdate);

@@ -2,6 +2,7 @@ package gr.aueb.cf.eduapp.repository;
 
 import gr.aueb.cf.eduapp.core.enums.GenderType;
 import gr.aueb.cf.eduapp.core.enums.Role;
+import gr.aueb.cf.eduapp.model.Teacher;
 import gr.aueb.cf.eduapp.model.User;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+    private TeacherRepository teacherRepository;
     private PasswordEncoder passwordEncoder;
 
 
@@ -43,7 +45,8 @@ class UserRepositoryTest {
 
         IntStream.range(0, 10).forEach(i -> {
             User user = new User();
-            user.setUsername(faker.internet().username() + "-" + UUID.randomUUID().toString().substring(0, 4)); // ensure uniqueness
+            Teacher teacher = new Teacher();
+            user.setUsername(faker.internet().username() + "-" + UUID.randomUUID().toString().substring(0, 4));
             String rawPassword = "C0d1ngF@";
             user.setPassword(passwordEncoder.encode(rawPassword));
             user.setFirstname(faker.name().firstName());
@@ -58,7 +61,12 @@ class UserRepositoryTest {
             user.setRole(faker.options().option(Role.values()));
             user.setIsActive(true);
 
-            userRepository.save(user);
+            teacher = new Teacher();
+            teacher.setUuid(UUID.randomUUID().toString());
+            teacher.setIsActive(true);
+            teacher.setUser(user);
+
+            teacherRepository.save(teacher);
         });
     }
 

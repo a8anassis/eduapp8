@@ -56,7 +56,6 @@ dependencies {
 //	compileOnly 'org.projectlombok:lombok' redundant if compileOnly.extendsFrom has been defined
 	annotationProcessor 'org.projectlombok:lombok'
 //	testCompileOnly 'org.projectlombok:lombok:1.18.30' redundant if testCompileOnly.extendsFrom has been defined
-//	testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
