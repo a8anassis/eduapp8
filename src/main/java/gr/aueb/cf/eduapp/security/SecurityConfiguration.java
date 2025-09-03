@@ -44,9 +44,17 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req -> req
                                 .requestMatchers(HttpMethod.POST, "/api/teachers").permitAll()           // register
                                 .requestMatchers("/api/auth/authenticate").permitAll()
+                                .requestMatchers(
+                                    "/swagger-ui.html",        // The old Swagger UI HTML (if used)
+                                    "/swagger-ui/**",          // All Swagger UI resources (JS, CSS, etc.)
+                                    "/v3/api-docs/**",         // The API JSON docs
+                                    "/v3/api-docs.yaml",       // YAML version of the docs
+                                    "/swagger-resources/**",   // Swagger resource descriptors
+                                    "/configuration/**"        // Swagger configuration endpoints
+                                ).permitAll()
                                 .requestMatchers("/api/teachers/**").hasAnyRole("SUPER_ADMIN", "TEACHER")
                                 .requestMatchers("/api/employess/**").hasRole("EMPLOYEE")
-                                .requestMatchers("/**").permitAll()
+                                .requestMatchers("/**").authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
