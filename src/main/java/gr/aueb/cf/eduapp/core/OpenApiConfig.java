@@ -1,4 +1,4 @@
-package gr.aueb.cf.eduapp.authentication;
+package gr.aueb.cf.eduapp.core;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
