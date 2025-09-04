@@ -2,6 +2,8 @@ package gr.aueb.cf.eduapp.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.aueb.cf.eduapp.core.ErrorHandler;
+import gr.aueb.cf.eduapp.core.enums.GenderType;
+import gr.aueb.cf.eduapp.core.enums.Role;
 import gr.aueb.cf.eduapp.core.exceptions.AppObjectNotFoundException;
 import gr.aueb.cf.eduapp.dto.*;
 
@@ -72,20 +74,43 @@ class TeacherRestControllerTest {
 
     @Test
     void saveTeacher_shouldReturnCreated() throws Exception {
+//        UserInsertDTO userInsertDTO = UserInsertDTO.builder()
+//                .firstname("Αθανάσιος").lastname("Ανδρούτσος")
+//                .vat("123456789")
+//                .build();
         UserInsertDTO userInsertDTO = UserInsertDTO.builder()
-                .firstname("Αθανάσιος").lastname("Ανδρούτσος")
+                .firstname("Αθανάσιος")
+                .lastname("Ανδρούτσος")
+                .username("ath.an@gmail.com")
+                .password("Valid@123") // meets regex
                 .vat("123456789")
+                .fatherName("Ανδρέας")
+                .fatherLastname("Ανδρούτσος")
+                .motherName("Μαρία")
+                .motherLastname("Ανδρούτσου")
+                .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .gender(GenderType.MALE)
+                .role(Role.TEACHER)
                 .build();
+
+//        PersonalInfoInsertDTO personalInfoInsertDTO = PersonalInfoInsertDTO.builder()
+//                .amka("12345678987").identityNumber("ID123")
+//                .build();
+
         PersonalInfoInsertDTO personalInfoInsertDTO = PersonalInfoInsertDTO.builder()
-                .amka("AMKA123").identityNumber("ID123")
+                .amka("12345678987")
+                .identityNumber("ID123")
+                .placeOfBirth("Athens")
+                .municipalityOfRegistration("Athens Municipality")
                 .build();
+
         TeacherInsertDTO teacherInsertDTO = TeacherInsertDTO.builder()
                 .isActive(true).userInsertDTO(userInsertDTO)
                 .personalInfoInsertDTO(personalInfoInsertDTO)
                 .build();
         String uuid = "uuid-123";
         UserReadOnlyDTO userReadOnlyDTO = new UserReadOnlyDTO("Αθανάσιος", "Ανδρούτσος", "123456789");
-        PersonalInfoReadOnlyDTO personalInfoReadOnlyDTO = new PersonalInfoReadOnlyDTO("AMKA123", "ID123");
+        PersonalInfoReadOnlyDTO personalInfoReadOnlyDTO = new PersonalInfoReadOnlyDTO("12345678987", "ID123");
         TeacherReadOnlyDTO teacherReadOnlyDTO = new TeacherReadOnlyDTO(1L, uuid, true, userReadOnlyDTO, personalInfoReadOnlyDTO);
 
         // Create the JSON part using objectMapper for consistency
@@ -130,7 +155,8 @@ class TeacherRestControllerTest {
                 // Missing required fields...
               },
               "personalInfoInsertDTO": {
-                "amka": "AMKA123",
+              // should be 11
+                "amka": "AMKA123",            
                 "identityNumber": "ID123"
               }
             }
