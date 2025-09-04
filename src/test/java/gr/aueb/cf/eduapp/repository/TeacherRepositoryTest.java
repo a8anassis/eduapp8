@@ -104,9 +104,7 @@ class TeacherRepositoryTest {
 
     @Test
     void getTeacherByLastname() {
-        List<Teacher> teachers = teacherRepository.findAll().stream()
-                .filter(t -> t.getUser().getLastname().contains("Γιαννού"))
-                .toList();
+        List<Teacher> teachers = teacherRepository.findByUserLastname("Γιαννούτσου");
         assertEquals(1, teachers.size());
     }
 
@@ -114,7 +112,7 @@ class TeacherRepositoryTest {
     void testFindByUserId() {
         Optional<Teacher> teacherOpt = teacherRepository.findByUserId(existingUser.getId());
         assertTrue(teacherOpt.isPresent());
-        assertEquals(existingTeacher.getUuid(), teacherOpt.get().getUuid());
+        assertEquals(existingTeacher.getId(), teacherOpt.get().getId());
     }
 
     @Test
