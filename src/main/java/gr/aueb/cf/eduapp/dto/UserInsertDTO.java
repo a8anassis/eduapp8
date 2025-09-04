@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Builder
 public record UserInsertDTO(
-        @NotEmpty(message = "First name is required")
+        @NotBlank(message = "First name is required")
         String firstname,
 
         @NotEmpty(message = "Last name is required")
@@ -38,12 +38,12 @@ public record UserInsertDTO(
         @NotEmpty(message = "Mother's last name is required")
         String motherLastname,
 
-        @NotEmpty(message = "Date of birth is required")
+        @NotNull(message = "Date of birth is required")
         LocalDate dateOfBirth,
 
-        @NotEmpty(message = "Gender is required")
+        @NotNull(message = "Gender is required")
         GenderType gender,
 
-        @NotEmpty(message = "Role is required")
+        @NotNull(message = "Role is required")
         Role role
 ) {}
