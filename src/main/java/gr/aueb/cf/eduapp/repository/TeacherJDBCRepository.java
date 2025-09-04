@@ -45,7 +45,7 @@ public class TeacherJDBCRepository {
         // Uses LEFT JOIN for personal_info since personal_info can be null
         // Java17+ uses text blocks """ for multiline text without + or \n
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {        // implements the RowMapper Interface with rs and row num
             // Build User
             User user = new User();
             user.setId(rs.getLong("user_id"));
