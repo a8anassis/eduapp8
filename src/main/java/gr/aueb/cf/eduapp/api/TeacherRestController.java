@@ -8,6 +8,7 @@ import gr.aueb.cf.eduapp.dto.TeacherInsertDTO;
 import gr.aueb.cf.eduapp.dto.TeacherReadOnlyDTO;
 import gr.aueb.cf.eduapp.dto.TeacherUpdateDTO;
 import gr.aueb.cf.eduapp.service.ITeacherService;
+import gr.aueb.cf.eduapp.validator.TeacherInsertValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -71,8 +72,8 @@ public class TeacherRestController {
     @PostMapping(value = "/teachers")
     public ResponseEntity<TeacherReadOnlyDTO> saveTeacher(
             @Valid @RequestPart(name = "teacher") TeacherInsertDTO teacherInsertDTO,
-            @Nullable @RequestPart(value = "amkaFile", required = false) MultipartFile amkaFile,
-            BindingResult bindingResult)
+            BindingResult bindingResult,
+            @Nullable @RequestPart(value = "amkaFile", required = false) MultipartFile amkaFile)
             throws AppObjectAlreadyExists, IOException, ValidationException {
 
         if (bindingResult.hasErrors()) {
