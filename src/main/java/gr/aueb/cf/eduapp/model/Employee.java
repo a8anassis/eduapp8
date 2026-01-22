@@ -41,6 +41,7 @@ public class Employee extends AbstractEntity {
     public void addEducationalUnit(EducationalUnit educationalUnit) {
         if (eduUnits == null) eduUnits = new HashSet<>();
         eduUnits.add(educationalUnit);
+        educationalUnit.getEmployees().add(this);
     }
 
     public void removeEducationalUnit(EducationalUnit educationalUnit) {
